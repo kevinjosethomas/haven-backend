@@ -1,19 +1,18 @@
 
+-- Tables
+
 CREATE TABLE IF NOT EXISTS user_details (
   id                   SERIAL PRIMARY KEY,
-  email                VARCHAR,
+  email                VARCHAR UNIQUE,
   vanity               VARCHAR,
   username             VARCHAR,
   avatar               VARCHAR,
   email_verified       BOOLEAN,
   publicity            SMALLINT,
   followers            INT,
+  following            INT,
   connections          INT,
-  staff                BOOLEAN,
-  verified             BOOLEAN,
-  og                   BOOLEAN,
-  premium              BOOLEAN,
-  premium              BOOLEAN,
+  public_flags         INT,
   updated_at           TIMESTAMPTZ,
   created_at           TIMESTAMPTZ
 );
@@ -42,6 +41,16 @@ CREATE TABLE IF NOT EXISTS user_identity (
   interests            JSON
 );
 
+CREATE TABLE IF NOT EXISTS user_socials (
+  id SERIAL            PRIMARY KEY,
+  user_id              INT REFERENCES user_details (id),
+  platform             VARCHAR,
+  username             VARCHAR,
+  access_token         VARCHAR,
+  refresh_token        VARCHAR,
+  expires_at           TIMESTAMPTZ
+);
+
 CREATE TABLE IF NOT EXISTS user_followers (
   id                   SERIAL PRIMARY KEY,
   followed             INT REFERENCES user_details (id),
@@ -64,7 +73,7 @@ CREATE TABLE IF NOT EXISTS user_bookmarks (
 );
 
 CREATE TABLE IF NOT EXISTS user_connection_requests (
-  id SERIAL            PRIMARY KEY,
+  id                   SERIAL PRIMARY KEY,
   requested            INT REFERENCES user_details (id),
   requester            INT REFERENCES user_details (id),
   status               VARCHAR,
@@ -89,10 +98,82 @@ CREATE TABLE IF NOT EXISTS user_links (
   expires_at           TIMESTAMPTZ,
   clicks               INT,
   unique_clicks        INT
-)
+);
 
 CREATE TABLE IF NOT EXISTS link_clicks (
-  id                   INT REFERENCES user_links (id),
+  id                   INT PRIMARY KEY REFERENCES user_links (id),
   ip_address           VARCHAR,
   timestamp            TIMESTAMPTZ
 );
+
+
+-- Trigger Functions
+
+CREATE OR REPLACE FUNCTION add_follower()
+RETURNS trigger AS
+$BODY$
+BEGIN
+UPDATE user_details SET followers = followers + 1 WHERE id = NEW.followed;
+UPDATE user_details SET following = following + 1 WHERE id = NEW.follower;
+RETURN NEW;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER add_follower
+  AFTER INSERT
+  ON user_followers
+  FOR EACH ROW
+  EXECUTE PROCEDURE add_follower();
+
+CREATE OR REPLACE FUNCTION remove_follower()
+RETURNS trigger AS
+$BODY$
+BEGIN
+UPDATE user_details SET followers = followers - 1 WHERE id = NEW.followed;
+UPDATE user_details SET following = following - 1 WHERE id = NEW.follower;
+RETURN NEW;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER remove_follower
+  AFTER DELETE
+  ON user_followers
+  FOR EACH ROW
+  EXECUTE PROCEDURE remove_follower();
+
+
+CREATE OR REPLACE FUNCTION increment_user_connections()
+RETURNS trigger AS
+$BODY$
+BEGIN
+UPDATE user_details SET connections = connections + 1 WHERE id = NEW.user_one OR id = NEW.user_two;
+RETURN NEW;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER increment_user_connections
+  AFTER DELETE
+  ON user_connections
+  FOR EACH ROW
+  EXECUTE PROCEDURE increment_user_connections();
+
+CREATE OR REPLACE FUNCTION decrement_user_connections()
+RETURNS trigger AS
+$BODY$
+BEGIN
+UPDATE user_details SET connections = connections - 1 WHERE id = NEW.user_one OR id = NEW.user_two;
+RETURN NEW;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER decrement_user_connections
+  AFTER DELETE
+  ON user_connections
+  FOR EACH ROW
+  EXECUTE PROCEDURE decrement_user_connections();
+
+
