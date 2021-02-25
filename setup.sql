@@ -1,6 +1,4 @@
 
--- Tables
-
 CREATE TABLE IF NOT EXISTS user_details (
   id                   SERIAL PRIMARY KEY,
   email                VARCHAR UNIQUE,
@@ -9,9 +7,6 @@ CREATE TABLE IF NOT EXISTS user_details (
   avatar               VARCHAR,
   email_verified       BOOLEAN,
   publicity            SMALLINT,
-  followers            INT,
-  following            INT,
-  connections          INT,
   public_flags         INT,
   updated_at           TIMESTAMPTZ,
   created_at           TIMESTAMPTZ
@@ -95,85 +90,13 @@ CREATE TABLE IF NOT EXISTS user_links (
   redirect             VARCHAR,
   owner                INT REFERENCES user_details (id),
   active               BOOLEAN,
-  expires_at           TIMESTAMPTZ,
-  clicks               INT,
-  unique_clicks        INT
+  created_at           TIMESTAMPTZ,
+  expires_at           TIMESTAMPTZ
 );
 
 CREATE TABLE IF NOT EXISTS link_clicks (
-  id                   INT PRIMARY KEY REFERENCES user_links (id),
+  id                   SERIAL,
+  link                 INT PRIMARY KEY REFERENCES user_links (id),
   ip_address           VARCHAR,
   timestamp            TIMESTAMPTZ
 );
-
-
--- Trigger Functions
-
-CREATE OR REPLACE FUNCTION add_follower()
-RETURNS trigger AS
-$BODY$
-BEGIN
-UPDATE user_details SET followers = followers + 1 WHERE id = NEW.followed;
-UPDATE user_details SET following = following + 1 WHERE id = NEW.follower;
-RETURN NEW;
-END;
-$BODY$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER add_follower
-  AFTER INSERT
-  ON user_followers
-  FOR EACH ROW
-  EXECUTE PROCEDURE add_follower();
-
-CREATE OR REPLACE FUNCTION remove_follower()
-RETURNS trigger AS
-$BODY$
-BEGIN
-UPDATE user_details SET followers = followers - 1 WHERE id = NEW.followed;
-UPDATE user_details SET following = following - 1 WHERE id = NEW.follower;
-RETURN NEW;
-END;
-$BODY$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER remove_follower
-  AFTER DELETE
-  ON user_followers
-  FOR EACH ROW
-  EXECUTE PROCEDURE remove_follower();
-
-
-CREATE OR REPLACE FUNCTION increment_user_connections()
-RETURNS trigger AS
-$BODY$
-BEGIN
-UPDATE user_details SET connections = connections + 1 WHERE id = NEW.user_one OR id = NEW.user_two;
-RETURN NEW;
-END;
-$BODY$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER increment_user_connections
-  AFTER DELETE
-  ON user_connections
-  FOR EACH ROW
-  EXECUTE PROCEDURE increment_user_connections();
-
-CREATE OR REPLACE FUNCTION decrement_user_connections()
-RETURNS trigger AS
-$BODY$
-BEGIN
-UPDATE user_details SET connections = connections - 1 WHERE id = NEW.user_one OR id = NEW.user_two;
-RETURN NEW;
-END;
-$BODY$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER decrement_user_connections
-  AFTER DELETE
-  ON user_connections
-  FOR EACH ROW
-  EXECUTE PROCEDURE decrement_user_connections();
-
-
