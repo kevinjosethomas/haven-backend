@@ -1,6 +1,7 @@
 {
   "name": "haven-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "⚡ Node/Fastify Backend and API for Haven",
   "main": "src/app.js",
   "scripts": {
