@@ -5,7 +5,8 @@
   "description": "⚡ Node/Fastify Backend and API for Haven",
   "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,13 @@
   "bugs": {
     "url": "https://github.com/teamcodebyte/haven-backend/issues"
   },
-  "homepage": "https://github.com/teamcodebyte/haven-backend#readme"
+  "homepage": "https://github.com/teamcodebyte/haven-backend#readme",
+  "dependencies": {
+    "fastify": "^3.12.0",
+    "pg": "^8.5.1",
+    "pg-pool": "^3.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
 }
