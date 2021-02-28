@@ -1,0 +1,27 @@
+{
+  "name": "haven-backend",
+  "version": "1.0.0",
+  "description": "⚡ Node/Fastify Backend and API for Haven",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teamcodebyte/haven-backend.git"
+  },
+  "keywords": [
+    "nodejs",
+    "api",
+    "backend",
+    "rest-api",
+    "postgresql",
+    "fastify"
+  ],
+  "author": "teamcodebyte",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/teamcodebyte/haven-backend/issues"
+  },
+  "homepage": "https://github.com/teamcodebyte/haven-backend#readme"
+}
