@@ -2,7 +2,7 @@ import plugin from "fastify-plugin";
 
 import cors from "fastify-cors";
 import helmet from "fastify-helmet";
-import compression from "compression";
+import compress from "fastify-compress";
 import middlewareHandler from "fastify-express";
 
 async function middleware(fastify) {
@@ -11,7 +11,7 @@ async function middleware(fastify) {
   await fastify.register(middlewareHandler);
   fastify.register(cors);
   fastify.register(helmet);
-  fastify.use(compression);
+  fastify.register(compress);
 
 }
 
