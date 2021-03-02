@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS user_details (
 );
 
 CREATE TABLE IF NOT EXISTS user_login (
-  id                   INT PRIMARY KEY REFERENCES user_details (id),
-  email                VARCHAR REFERENCES user_details (email),
+  id                   INT PRIMARY KEY REFERENCES user_details (id) ON DELETE CASCADE,
+  email                VARCHAR REFERENCES user_details (id) ON DELETE CASCADE (email),
   username             VARCHAR,
   password             VARCHAR,
   last_login           TIMESTAMPTZ,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS user_login (
 );
 
 CREATE TABLE IF NOT EXISTS user_identity (
-  id                   INT PRIMARY KEY REFERENCES user_details (id),
+  id                   INT PRIMARY KEY REFERENCES user_details (id) ON DELETE CASCADE,
   name                 VARCHAR,
   email                VARCHAR,
   description          TEXT,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS user_identity (
 
 CREATE TABLE IF NOT EXISTS user_socials (
   id SERIAL            PRIMARY KEY,
-  user_id              INT REFERENCES user_details (id),
+  user_id              INT REFERENCES user_details (id) ON DELETE CASCADE,
   platform             VARCHAR,
   username             VARCHAR,
   access_token         VARCHAR,
@@ -48,47 +48,67 @@ CREATE TABLE IF NOT EXISTS user_socials (
 
 CREATE TABLE IF NOT EXISTS user_followers (
   id                   SERIAL PRIMARY KEY,
-  followed             INT REFERENCES user_details (id),
-  follower             INT REFERENCES user_details (id),
+  followed             INT REFERENCES user_details (id) ON DELETE CASCADE,
+  follower             INT REFERENCES user_details (id) ON DELETE CASCADE,
   followed_at          TIMESTAMPTZ
 );
 
 CREATE TABLE IF NOT EXISTS user_connections (
   id                   SERIAL PRIMARY KEY,
-  user_one             INT REFERENCES user_details (id),
-  user_two             INT REFERENCES user_details (id),
+  user_one             INT REFERENCES user_details (id) ON DELETE CASCADE,
+  user_two             INT REFERENCES user_details (id) ON DELETE CASCADE,
   connected_at         TIMESTAMPTZ
 );
 
 CREATE TABLE IF NOT EXISTS user_bookmarks (
   id                   SERIAL PRIMARY KEY,
-  bookmarked           INT REFERENCES user_details (id),
-  bookmarker           INT REFERENCES user_details (id),
+  bookmarked           INT REFERENCES user_details (id) ON DELETE CASCADE,
+  bookmarker           INT REFERENCES user_details (id) ON DELETE CASCADE,
   bookmarked_at        TIMESTAMPTZ
 );
 
 CREATE TABLE IF NOT EXISTS user_connection_requests (
   id                   SERIAL PRIMARY KEY,
-  requested            INT REFERENCES user_details (id),
-  requester            INT REFERENCES user_details (id),
+  requested            INT REFERENCES user_details (id) ON DELETE CASCADE,
+  requester            INT REFERENCES user_details (id) ON DELETE CASCADE,
   status               VARCHAR,
   requested_at         TIMESTAMPTZ
 );
 
 CREATE TABLE IF NOT EXISTS user_reports (
   id                   SERIAL PRIMARY KEY,
-  reported             INT REFERENCES user_details (id),
-  reporter             INT REFERENCES user_details (id),
+  reported             INT REFERENCES user_details (id) ON DELETE CASCADE,
+  reporter             INT REFERENCES user_details (id) ON DELETE CASCADE,
   reason               TEXT,
   proof                VARCHAR,
   reported_at          TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS user_email_verification (
+  id                   SERIAL PRIMARY KEY,
+  user                 INT REFERENCES user_details (id) ON DELETE CASCADE,
+  email                VARCHAR REFERENCES user_details (id) ON DELETE CASCADE,
+  code                 VARCHAR UNIQUE,
+  status               VARCHAR,
+  created_at           TIMESTAMPTZ,
+  expires_at           TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS user_referrals (
+  id                   SERIAL PRIMARY KEY,
+  user                 INT REFERENCES user_details (id) ON DELETE CASCADE,
+  used_by              JSON,
+  status               VARCHAR,
+  uses                 INT,
+  max_uses             INT,
+  created_at           TIMESTAMPTZ
 );
 
 CREATE TABLE IF NOT EXISTS user_links (
   id                   SERIAL PRIMARY KEY,
   slug                 VARCHAR,
   redirect             VARCHAR,
-  owner                INT REFERENCES user_details (id),
+  owner                INT REFERENCES user_details (id) ON DELETE CASCADE,
   active               BOOLEAN,
   created_at           TIMESTAMPTZ,
   expires_at           TIMESTAMPTZ
@@ -96,7 +116,7 @@ CREATE TABLE IF NOT EXISTS user_links (
 
 CREATE TABLE IF NOT EXISTS link_clicks (
   id                   SERIAL,
-  link                 INT PRIMARY KEY REFERENCES user_links (id),
+  link                 INT PRIMARY KEY REFERENCES user_links (id) ON DELETE CASCADE,
   ip_address           VARCHAR,
   timestamp            TIMESTAMPTZ
 );
