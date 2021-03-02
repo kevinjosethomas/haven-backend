@@ -84,6 +84,26 @@ CREATE TABLE IF NOT EXISTS user_reports (
   reported_at          TIMESTAMPTZ
 );
 
+CREATE TABLE IF NOT EXISTS user_email_verification (
+  id                   SERIAL PRIMARY KEY,
+  user                 INT REFERENCES user_details (id),
+  email                VARCHAR REFERENCES user_details (id),
+  code                 VARCHAR UNIQUE,
+  status               VARCHAR,
+  created_at           TIMESTAMPTZ,
+  expires_at           TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS user_referrals (
+  id                   SERIAL PRIMARY KEY,
+  user                 INT REFERENCES user_details (id),
+  used_by              JSON,
+  status               VARCHAR,
+  uses                 INT,
+  max_uses             INT,
+  created_at           TIMESTAMPTZ
+);
+
 CREATE TABLE IF NOT EXISTS user_links (
   id                   SERIAL PRIMARY KEY,
   slug                 VARCHAR,
