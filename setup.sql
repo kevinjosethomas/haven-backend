@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS user_details (
 
 CREATE TABLE IF NOT EXISTS user_login (
   id                   INT PRIMARY KEY REFERENCES user_details (id) ON DELETE CASCADE,
-  email                VARCHAR REFERENCES user_details (id) ON DELETE CASCADE (email),
+  email                VARCHAR REFERENCES user_details (email) ON DELETE CASCADE,
   username             VARCHAR,
   password             VARCHAR,
   last_login           TIMESTAMPTZ,
@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS user_reports (
 
 CREATE TABLE IF NOT EXISTS user_email_verification (
   id                   SERIAL PRIMARY KEY,
-  user                 INT REFERENCES user_details (id) ON DELETE CASCADE,
-  email                VARCHAR REFERENCES user_details (id) ON DELETE CASCADE,
+  user_id              INT REFERENCES user_details (id) ON DELETE CASCADE,
+  email                VARCHAR REFERENCES user_details (email) ON DELETE CASCADE,
   code                 VARCHAR UNIQUE,
   status               VARCHAR,
   created_at           TIMESTAMPTZ,
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS user_email_verification (
 
 CREATE TABLE IF NOT EXISTS user_referrals (
   id                   SERIAL PRIMARY KEY,
-  user                 INT REFERENCES user_details (id) ON DELETE CASCADE,
+  user_id              INT REFERENCES user_details (id) ON DELETE CASCADE,
   used_by              JSON,
   status               VARCHAR,
   uses                 INT,
