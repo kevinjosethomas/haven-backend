@@ -2,8 +2,8 @@
 CREATE TABLE IF NOT EXISTS user_details (
   id                   SERIAL PRIMARY KEY,
   email                VARCHAR UNIQUE,
-  vanity               VARCHAR,
-  username             VARCHAR,
+  vanity               VARCHAR UNIQUE,
+  username             VARCHAR UNIQUE,
   avatar               VARCHAR,
   email_verified       BOOLEAN,
   publicity            SMALLINT,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS user_details (
 CREATE TABLE IF NOT EXISTS user_login (
   id                   INT PRIMARY KEY REFERENCES user_details (id) ON DELETE CASCADE,
   email                VARCHAR REFERENCES user_details (email) ON DELETE CASCADE,
-  username             VARCHAR,
+  username             VARCHAR UNIQUE,
   password             VARCHAR,
   last_login           TIMESTAMPTZ,
   login_ip             VARCHAR
