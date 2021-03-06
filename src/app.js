@@ -33,4 +33,4 @@ const app = fastify({
 
 })();
 
-export { app, debug }
+export { app }
