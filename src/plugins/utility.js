@@ -1,3 +1,4 @@
+import plugin from "fastify-plugin";
 
 async function utility(fastify) {
 
