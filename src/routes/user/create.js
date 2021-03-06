@@ -1,6 +1,23 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
+function hashPassword(password) {
+
+  return new Promise((resolve, reject) => {
+
+    bcrypt.hash(password, 10, (err, hash) => {
+      if (err) {
+        fastify.debug(err);
+        reject(err);
+        throw err;
+      }
+      return resolve(hash);
+    })
+
+  })
+
+}
+
 export default async function router (fastify) {
 
   fastify.post("/v1/user/create", async (req, res) => {
@@ -47,7 +64,7 @@ export default async function router (fastify) {
 
     if (existingUsers.rowCount) {
 
-      for (const row of rows) {
+      for (const row of existingUsers.rows) {
         if (row.email == email) {
           return res.code(409).send({
             success: false,
@@ -71,38 +88,30 @@ export default async function router (fastify) {
     }
 
     // Hash the provided password to store it in the database
-    let hashedPassword;
-    await bcrypt.hash(password, 10, (err, hash) => {
-      if (err) {
-        fastify.debug(err);
-        throw err;
-      }
-      hashedPassword = hash;
-    })
+    const hashedPassword = await hashPassword(password);
 
     const id = (await fastify.pg.query(
-      "INSERT INTO user_details (email, vanity, username, email_verified, updated_at, created_at) VALUES ($1, $2, $3, false, NOW(), NOW()) RETURNING *",
+      "INSERT INTO user_details (email, vanity, username, email_verified, updated_at, created_at) VALUES ($1, $2, $3, false, NOW(), NOW()) RETURNING id",
       [email, vanity, username]
     )).rows[0].id;
 
-    const cipher = crypto.createCipheriv("aes-256-cbc")
+    const hmac = crypto.createHmac("sha256", process.env.HASH_KEY_1);
+    const hashed_ip = hmac.update(req.ip).digest("hex");
 
     await fastify.pg.query(
       "INSERT INTO user_login (id, email, username, password, last_login, login_ip) VALUES ($1, $2, $3, $4, NOW(), $5)",
-      [id, email, username, password, ]
+      [id, email, username, hashedPassword, hashed_ip]
     )
-    
+
+    await fastify.pg.query(
+      "INSERT INTO user_identity (id) VALUES ($1)",
+      [id]
+    )
 
     return res.code(200).send({
       success: true,
       message: "OK - Successfully created the user account"
     })
-
-    
-
-    // TODO
-    // Hash password
-    // Insert into db
 
   })
 
