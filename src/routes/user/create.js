@@ -24,7 +24,6 @@ export default async function router (fastify) {
 
     const body = req.body;
     const email = body.email;
-    const vanity = body.vanity;
     const username = body.username;
     const password = body.password;
     
@@ -33,13 +32,6 @@ export default async function router (fastify) {
       return res.code(400).send({
         success: false,
         message: "Bad Request - Invalid email provided"
-      });
-    }
-
-    if (!vanity || vanity.length < 3 || vanity.length > 32) {
-      return res.code(400).send({
-        success: false,
-        message: "Bad Request - Invalid vanity provided"
       });
     }
 
@@ -58,8 +50,8 @@ export default async function router (fastify) {
     }
 
     let existingUsers = await fastify.pg.query(
-      "SELECT * FROM user_details WHERE LOWER(email) = LOWER($1) OR LOWER(vanity) = LOWER($2) OR LOWER(username) = LOWER($3)",
-      [email, vanity, username]
+      "SELECT * FROM user_details WHERE LOWER(email) = LOWER($1) OR LOWER(username) = LOWER($2)",
+      [email, username]
     )
 
     if (existingUsers.rowCount) {
@@ -69,12 +61,6 @@ export default async function router (fastify) {
           return res.code(409).send({
             success: false,
             message: "Conflict - This email has already been used"
-          })
-        }
-        if (row.vanity == vanity) {
-          return res.code(409).send({
-            success: false,
-            message: "Conflict - This vanity has already been taken"
           })
         }
         if (row.username == username) {
@@ -91,8 +77,8 @@ export default async function router (fastify) {
     const hashedPassword = await hashPassword(password);
 
     const id = (await fastify.pg.query(
-      "INSERT INTO user_details (email, vanity, username, email_verified, updated_at, created_at) VALUES ($1, $2, $3, false, NOW(), NOW()) RETURNING id",
-      [email, vanity, username]
+      "INSERT INTO user_details (email, username, email_verified, updated_at, created_at) VALUES ($1, $2, false, NOW(), NOW()) RETURNING id",
+      [email, username]
     )).rows[0].id;
 
     const hmac = crypto.createHmac("sha256", process.env.HASH_KEY_1);
