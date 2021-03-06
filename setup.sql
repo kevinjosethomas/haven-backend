@@ -2,7 +2,6 @@
 CREATE TABLE IF NOT EXISTS user_details (
   id                   SERIAL PRIMARY KEY,
   email                VARCHAR UNIQUE,
-  vanity               VARCHAR UNIQUE,
   username             VARCHAR UNIQUE,
   avatar               VARCHAR,
   email_verified       BOOLEAN,
