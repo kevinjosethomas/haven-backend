@@ -20,7 +20,7 @@ function hashPassword(password) {
 
 export default async function router (fastify) {
 
-  fastify.post("/v1/user/create", async (req, res) => {
+  fastify.post(`/${process.env.VERSION}/user/create`, async (req, res) => {
 
     const body = req.body;
     const email = body.email;
