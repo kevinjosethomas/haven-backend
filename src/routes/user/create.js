@@ -78,7 +78,7 @@ export default async function router (fastify) {
     const hashedPassword = await hashPassword(password);
 
     const id = (await fastify.pg.query(
-      "INSERT INTO user_details (email, username, email_verified, updated_at, created_at) VALUES ($1, $2, false, NOW(), NOW()) RETURNING id",
+      "INSERT INTO user_details (email, username, email_verified, public, flags, updated_at, created_at) VALUES ($1, $2, false, false, 0, NOW(), NOW()) RETURNING id",
       [email, username]
     )).rows[0].id;
 
