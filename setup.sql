@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS user_reports (
   reporter             INT REFERENCES user_details (id) ON DELETE CASCADE,
   reason               TEXT,
   proof                VARCHAR,
+  status               SMALLINT
   reported_at          TIMESTAMPTZ
 );
 
