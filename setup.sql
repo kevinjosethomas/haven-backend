@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS user_email_verification (
   user_id              INT REFERENCES user_details (id) ON DELETE CASCADE,
   email                VARCHAR REFERENCES user_details (email) ON DELETE CASCADE,
   code                 VARCHAR UNIQUE,
-  status               VARCHAR,
+  status               SMALLINT,
   created_at           TIMESTAMPTZ,
   expires_at           TIMESTAMPTZ
 );
