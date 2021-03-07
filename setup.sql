@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS user_identity (
   id                   INT PRIMARY KEY REFERENCES user_details (id) ON DELETE CASCADE,
   name                 VARCHAR,
   email                VARCHAR,
+  bio                  TEXT,
   description          TEXT,
   status               TEXT,
   website              VARCHAR,
@@ -80,7 +81,7 @@ CREATE TABLE IF NOT EXISTS user_reports (
   reporter             INT REFERENCES user_details (id) ON DELETE CASCADE,
   reason               TEXT,
   proof                VARCHAR,
-  status               SMALLINT
+  status               SMALLINT,
   reported_at          TIMESTAMPTZ
 );
 
