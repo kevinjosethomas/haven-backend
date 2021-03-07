@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS user_referrals (
   id                   SERIAL PRIMARY KEY,
   user_id              INT REFERENCES user_details (id) ON DELETE CASCADE,
   used_by              JSON,
-  status               VARCHAR,
+  status               SMALLINT,
   uses                 INT,
   max_uses             INT,
   created_at           TIMESTAMPTZ
