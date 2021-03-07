@@ -6,6 +6,7 @@ import database from "./plugins/database.js";
 import middleware from "./plugins/middleware.js";
 
 import userCreate from "./routes/user/create.js";
+import userDetails from "./routes/user/details.js";
 
 // Loading environment variables
 dotenv.config();
@@ -27,6 +28,7 @@ const app = fastify({
 
   // Register endpoints
   app.register(userCreate);
+  app.register(userDetails);
 
   // Run the webserver
   await app.listen(process.env.PORT);
