@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS user_connection_requests (
   id                   SERIAL PRIMARY KEY,
   requested            INT REFERENCES user_details (id) ON DELETE CASCADE,
   requester            INT REFERENCES user_details (id) ON DELETE CASCADE,
-  status               VARCHAR,
+  status               SMALLINT,
   requested_at         TIMESTAMPTZ
 );
 
