@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS user_details (
   username             VARCHAR UNIQUE,
   avatar               VARCHAR,
   email_verified       BOOLEAN,
-  publicity            SMALLINT,
+  public               BOOLEAN,
   flags                INT,
   updated_at           TIMESTAMPTZ,
   created_at           TIMESTAMPTZ
