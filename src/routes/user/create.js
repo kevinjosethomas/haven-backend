@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import validator from "email-validator";
 
 function hashPassword(password) {
 
@@ -28,7 +29,7 @@ export default async function router (fastify) {
     const password = body.password;
     
     // Check if input is valid (length limits)
-    if (!email || email.length < 3 || email.length > 320) {
+    if (!email || !validator.validate(email)) {
       return res.code(400).send({
         success: false,
         message: "Bad Request - Invalid email provided"
@@ -49,7 +50,7 @@ export default async function router (fastify) {
       });
     }
 
-    let existingUsers = await fastify.pg.query(
+    const existingUsers = await fastify.pg.query(
       "SELECT * FROM user_details WHERE LOWER(email) = LOWER($1) OR LOWER(username) = LOWER($2)",
       [email, username]
     )
