@@ -36,7 +36,7 @@ export default async function router (fastify) {
       });
     }
 
-    if (!username || username.length < 3 || username.length > 32) {
+    if (!username || username.length < 3 || username.length > 32 || !Boolean(username.match("^[A-Za-z0-9]+$"))) {
       return res.code(400).send({
         success: false,
         message: "Bad Request - Invalid username provided"
