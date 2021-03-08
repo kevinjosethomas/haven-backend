@@ -18,17 +18,17 @@ const app = fastify({
   logger: true
 });
 
+// Initialize plugins
+app.register(utility);
+app.register(database);
+app.register(middleware);
+
+// Register endpoints
+app.register(userCreate);
+app.register(userDetails);
+
 // Asynchronous tasks
 (async () => {
-
-  // Initialize plugins
-  app.register(utility);
-  app.register(database);
-  app.register(middleware);
-
-  // Register endpoints
-  app.register(userCreate);
-  app.register(userDetails);
 
   // Run the webserver
   await app.listen(process.env.PORT);
