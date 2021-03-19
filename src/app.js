@@ -7,6 +7,7 @@ import middleware from "./plugins/middleware.js";
 
 import userCreate from "./routes/user/create.js";
 import userDetails from "./routes/user/details.js";
+import userDelete from "./routes/user/delete.js";
 
 // Loading environment variables
 dotenv.config();
@@ -25,6 +26,7 @@ app.register(middleware);
 
 // Register endpoints
 app.register(userCreate);
+app.register(userDetails);
 app.register(userDetails);
 
 // Asynchronous tasks
