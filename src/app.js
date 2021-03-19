@@ -27,7 +27,7 @@ app.register(middleware);
 // Register endpoints
 app.register(userCreate);
 app.register(userDetails);
-app.register(userDetails);
+app.register(userDelete);
 
 // Asynchronous tasks
 (async () => {
