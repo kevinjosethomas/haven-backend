@@ -24,7 +24,7 @@ export default async function router (fastify) {
 
     return res.code(200).send({
       success: true,
-      message: "OK - Successfully deleted provided user account"
+      message: "OK - Successfully deleted the specified user account"
     });
 
   })
